@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="type">
+  <form method="post">
+    <label>
+      <div class="post-title">Subject</div>
+      <input type="text" name="subject" value="{{subject}}">
+    </label>
+    <br>
+    <label>
+      <div class="post-title">Prompt</div>
+      <textarea class="prompt" name="prompt">{{prompt}}</textarea>
+    </label>
+    <label>
+      <div class="post-title">Essay</div>
+      <textarea name="content">{{content}}</textarea>
+    </label>
+    <div class="error">{{error}}</div>
+    <br>
+    <input type="submit">
+  </form>
+  <a href="/" class="goback-button">
+    Go Back
+  </a>
+</div>
+{% endblock %}

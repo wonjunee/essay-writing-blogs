@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="post">
+  <h2>edit comment</h2>
+  <form method="post">
+  <label>
+    <textarea class="comment" name="comment">{{comment.re_render() | safe}}</textarea>
+  </label>
+
+  <div class="error">{{error}}</div>
+
+  <input type="submit">
+  </form>
+</div>
+{% endblock %}
