@@ -147,6 +147,8 @@ class Post(db.Model):
     total = db.StringProperty()
 
     def render(self):
+        self._render_prompt = self.prompt.replace('\n', '<br>')
+        self._render_content = self.content.replace('\n', '<br>')
         return render_str("post.html", p = self)
 
     def render_comments(self, username):
@@ -182,7 +184,6 @@ class PostPage(BlogHandler):
         else:
             self.redirect('/login')
 
-import time
 class NewPost(BlogHandler):
     def get(self):
         if self.user:

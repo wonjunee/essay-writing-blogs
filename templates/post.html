@@ -1,4 +1,5 @@
 <div class="sub-title">Prompt</div>
-<div class="prompt">{{p.prompt}}</div>
+<div class="prompt">{{p._render_prompt | safe}}</div>
+<br>
 <div class="sub-title">Essay</div>
-<div class="content">{{p.content}}</div>
+<div class="content">{{p._render_content | safe}}</div>
