@@ -10,7 +10,7 @@
     {% for p in posts %}
     	<tr>
     	  <td><a href="/{{p.key().id()}}"" class="summary-date"> {{p.subject}} </a></td>
-        <td>{{p.prompt}}</td>
+        <td><div align="left">{{p.render_prompt() | safe}}</div></td>
     	</tr>
     {% endfor %}
   </table>

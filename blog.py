@@ -154,10 +154,9 @@ class Post(db.Model):
     def render_comments(self, username):
         return render_str("post-comments.html", p = self, username = username)
 
-    def _create_items_list(self):
-        items, _ = create_items_list(self.content)
-        return items
-
+    def render_prompt(self):
+        return self.prompt.replace('\n', '<br>')
+        
     @property
     def comments(self):
         return Comment.all().filter("post = ", str(self.key().id()))
