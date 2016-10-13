@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1 class="summary-title" style="margin-top:0">{{title}}</h1>
+  <a href="/newpost{{essaytype}}" class="sub-title">
+    Create A New Post
+  </a>
+
+  {% for p in posts %}
+
+    {{ p.render_comments(user.name) | safe }}
+
+    </div>
+    <br><br>
+  {% endfor %}
+
+{% endblock %}

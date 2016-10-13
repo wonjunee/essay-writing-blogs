@@ -1,17 +1,51 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <h1 class="summary-title" style="margin-top:0">Summary</h1>
+  <h1 class="summary-title" style="margin-top:0">GRE Writings</h1>
   <table cellspacing="10" align="center" class="summary">
   	<tr class="heading">
-  	  <td class="td-summary"> Date </td>
+  	  <td class="td-summary"> Subject </td>
+      <td> Counts </td>
       <td> Prompt </td>
   	</tr>
-    {% for p in posts %}
+    {% for p in gres %}
     	<tr>
     	  <td><a href="/{{p.key().id()}}"" class="summary-date"> {{p.subject}} </a></td>
+        <td>{{p.count_words() | safe}}</td>
         <td><div align="left">{{p.render_prompt() | safe}}</div></td>
     	</tr>
+    {% endfor %}
+  </table>
+  <hr>
+  <h1 class="summary-title" style="margin-top:0">NSF Essays</h1>
+  <table cellspacing="10" align="center" class="summary">
+    <tr class="heading">
+      <td class="td-summary"> Subject </td>
+      <td> Counts </td>
+      <td> Prompt </td>
+    </tr>
+    {% for p in nsfs %}
+      <tr>
+        <td><a href="/{{p.key().id()}}"" class="summary-date"> {{p.subject}} </a></td>
+        <td>{{p.count_words() | safe}}</td>
+        <td><div align="left">{{p.render_prompt() | safe}}</div></td>
+      </tr>
+    {% endfor %}
+  </table>
+  <hr>
+  <h1 class="summary-title" style="margin-top:0">Statement of Purpose</h1>
+  <table cellspacing="10" align="center" class="summary">
+    <tr class="heading">
+      <td class="td-summary"> Subject </td>
+      <td> Counts </td>
+      <td> Prompt </td>
+    </tr>
+    {% for p in sops %}
+      <tr>
+        <td><a href="/{{p.key().id()}}"" class="summary-date"> {{p.subject}} </a></td>
+        <td>{{p.count_words() | safe}}</td>
+        <td><div align="left">{{p.render_prompt() | safe}}</div></td>
+      </tr>
     {% endfor %}
   </table>
 {% endblock %}

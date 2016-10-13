@@ -130,6 +130,8 @@ class User(db.Model):
 
 ##### blog stuff
 
+ESSAY_TYPE = {"0": "GRE", "1": "NSF", "2": "SOP"}
+
 def blog_key(name = 'default'):
     return db.Key.from_path('blogs', name)
 
@@ -144,7 +146,7 @@ class Post(db.Model):
 
     username = db.StringProperty(required = True)
 
-    total = db.StringProperty()
+    essaytype = db.StringProperty(required = True)
 
     def render(self):
         self._render_prompt = self.prompt.replace('\n', '<br>')
@@ -156,7 +158,15 @@ class Post(db.Model):
 
     def render_prompt(self):
         return self.prompt.replace('\n', '<br>')
-        
+    
+    # count words
+    def count_words(self):
+        return len(self.content.split(" "))
+
+    # Essay Type
+    def essay_type(self):
+        return ESSAY_TYPE[self.essaytype]
+
     @property
     def comments(self):
         return Comment.all().filter("post = ", str(self.key().id()))
@@ -166,6 +176,30 @@ class BlogFront(BlogHandler):
         if self.user and self.user.name == "wonjunee":
             posts = Post.all().order('-created')
             self.render('front.html', posts = posts)
+        else:
+            self.redirect('/login')
+
+class GREFront(BlogHandler):
+    def get(self):
+        if self.user and self.user.name == "wonjunee":
+            posts = Post.all().order('-created').filter("essaytype = ", "0")
+            self.render('essayfront.html', posts = posts, essaytype = "0", title = "GRE Writings")
+        else:
+            self.redirect('/login')
+
+class NSFFront(BlogHandler):
+    def get(self):
+        if self.user and self.user.name == "wonjunee":
+            posts = Post.all().order('-created').filter("essaytype = ", "1")
+            self.render('essayfront.html', posts = posts, essaytype = "1", title = "NSF Graduate Fellowship")
+        else:
+            self.redirect('/login')
+
+class SOPFront(BlogHandler):
+    def get(self):
+        if self.user and self.user.name == "wonjunee":
+            posts = Post.all().order('-created').filter("essaytype = ", "2")
+            self.render('essayfront.html', posts = posts, essaytype = "2", title = "Statement of Purpose")
         else:
             self.redirect('/login')
 
@@ -184,7 +218,7 @@ class PostPage(BlogHandler):
             self.redirect('/login')
 
 class NewPost(BlogHandler):
-    def get(self):
+    def get(self, essaytype):
         if self.user:
             if self.user.name == "wonjunee":
                 self.render("newpost.html")
@@ -193,7 +227,7 @@ class NewPost(BlogHandler):
         else:
             self.redirect("/login")
 
-    def post(self):
+    def post(self, essaytype):
         if not self.user:
             self.redirect('/')
 
@@ -207,7 +241,8 @@ class NewPost(BlogHandler):
                 subject = subject,
                 content = content,
                 prompt = prompt,
-                username = username)
+                username = username,
+                essaytype = essaytype)
             p.put()
             self.redirect('/%s' % str(p.key().id()))
         else:
@@ -338,10 +373,8 @@ class Register(Signup):
     def done(self):
         #make sure the user doesn't already exist
         u = User.by_name(self.username)
-        if u:
-            msg = 'You are not allowed.'
-            self.render('signup-form.html', error_username = msg)
-        elif self.username == "wonjunee":
+        
+        if u == None and self.username == "wonjunee":
             # Create a new User instance
             u = User.register(self.username, self.password, self.email)
 
@@ -354,6 +387,9 @@ class Register(Signup):
 
             # Redirect to the welcome page
             self.redirect('/welcome')
+        else:
+            msg = 'You are not allowed.'
+            self.render('signup-form.html', error_username = msg)
 
 class Login(BlogHandler):
     def get(self):
@@ -523,15 +559,20 @@ class Deleted(BlogHandler):
 class Summary(BlogHandler):
     def get(self):
         if self.user and self.user.name=="wonjunee":
-            posts = Post.all().order('-created')
-            self.render('summary.html', posts=posts)
+            gres = Post.all().order('-created').filter("essaytype = ", "0")
+            nsfs = Post.all().order('-created').filter("essaytype = ", "1")
+            sops = Post.all().order('-created').filter("essaytype = ", "2")
+            self.render('summary.html', gres=gres, nsfs=nsfs, sops=sops)
         else:
             self.redirect('/login')
 
 app = webapp2.WSGIApplication([
                                ('/?', BlogFront),
                                ('/([0-9]+)', PostPage),
-                               ('/newpost', NewPost),
+                               ('/gre/?', GREFront),
+                               ('/nsf/?', NSFFront),
+                               ('/sop/?', SOPFront),
+                               ('/newpost([0-9])', NewPost),
                                ('/signup', Register),
                                ('/login', Login),
                                ('/logout', Logout),
